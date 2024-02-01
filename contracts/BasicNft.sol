@@ -18,6 +18,8 @@ contract BasicNft is ERC721 {
     // @notice Keeps track of the number of tokens minted
     uint256 private s_tokenCounter;
 
+    error NonExistentToken(uint256 tokenId);
+
     /**
      * @dev Initializes the contract by setting a `name` and a `symbol` to the token collection.
      */
@@ -43,11 +45,10 @@ contract BasicNft is ERC721 {
     function tokenURI(
         uint256 tokenId
     ) public view override returns (string memory) {
-        //        require(
-        //            _exists(tokenId),
-        //            "ERC721Metadata: URI query for nonexistent token"
-        //        );
-        return TOKEN_URI; // Returns the stored token URI
+        if (ownerOf(tokenId) == address(0)) {
+            revert NonExistentToken(tokenId);
+        }
+        return TOKEN_URI;
     }
 
     /**
