@@ -72,11 +72,12 @@ contract RandomIpfsNft is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
         bytes32 gasLane,
         uint32 callbackGasLimit,
         string[3] memory tokenUris,
-        uint256 mintFee
+        uint256 mintFee,
+        address owner
     )
         VRFConsumerBaseV2(vrfCoordinatorV2)
         ERC721("Random On Chain NFT", "RR")
-        Ownable(msg.sender)
+        Ownable(owner)
     {
         i_vrfCoordinator = VRFCoordinatorV2Interface(vrfCoordinatorV2);
         i_gasLane = gasLane;

@@ -23,7 +23,6 @@ const metadataTemplate = {
 
 async function main(): Promise<void> {
   try {
-    const [deployer] = await ethers.getSigners();
     const chainId = network.config.chainId || 31337;
     let vrfCoordinatorV2Address, subscriptionId;
 
@@ -39,7 +38,23 @@ async function main(): Promise<void> {
       const transactionResponse =
         await vrfCoordinatorV2Mock.createSubscription();
       const transactionReceipt = await transactionResponse.wait();
-      subscriptionId = transactionReceipt?.toJSON().events[0].args.subId;
+      let subscriptionId;
+      if (!transactionReceipt) throw new Error("transactionReceipt is null");
+      for (const log of transactionReceipt.logs) {
+        try {
+          const compatibleLog = { ...log, topics: [...log.topics] };
+          const parsedLog =
+            vrfCoordinatorV2Mock.interface.parseLog(compatibleLog);
+          if (!parsedLog) throw new Error("parsedLog is null");
+          if (parsedLog.name === "SubscriptionCreated") {
+            subscriptionId = parsedLog.args.subId.toString();
+            break;
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      }
+
       await vrfCoordinatorV2Mock.fundSubscription(subscriptionId, FUND_AMOUNT);
     } else {
       vrfCoordinatorV2Address = networkConfig[chainId].vrfCoordinatorV2;
