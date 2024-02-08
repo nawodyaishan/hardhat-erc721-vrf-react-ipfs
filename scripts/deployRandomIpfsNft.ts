@@ -2,11 +2,11 @@ import { ethers } from "hardhat";
 
 async function main(): Promise<void> {
   try {
-    console.log("Deploying BasicNft contract...");
-    const basicNft = await ethers.deployContract("BasicNft");
-    await basicNft.waitForDeployment();
-    console.log(`BasicNft Contract deployed to: ${basicNft.target}`);
-    console.log(`Transaction hash: ${basicNft.deploymentTransaction()}`);
+    console.log("Deploying RandomIpfsNft contract...");
+    const randomIpfsNft = await ethers.deployContract("RandomIpfsNft", []);
+    await randomIpfsNft.waitForDeployment();
+    console.log(`RandomIpfsNft Contract deployed to: ${randomIpfsNft.target}`);
+    console.log(`Transaction hash: ${randomIpfsNft.deploymentTransaction()}`);
   } catch (error) {
     console.error("Failed to deploy BasicNft Contract:", error);
     process.exitCode = 1;

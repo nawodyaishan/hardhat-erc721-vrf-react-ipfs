@@ -25,12 +25,26 @@ const MUMBAI__RPC_URL = process.env.MUMBAI__RPC_URL!;
 const PUBLIC_KEY = process.env.PUBLIC_KEY!;
 
 const config: HardhatUserConfig = {
-  solidity: "0.8.20",
+  solidity: {
+    compilers: [
+      {
+        version: "0.8.7",
+      },
+      {
+        version: "0.6.6",
+      },
+      {
+        version: "0.8.20",
+      },
+    ],
+  },
   etherscan: {
     apiKey: ETHERSCAN_API_KEY,
   },
   networks: {
-    hardhat: {},
+    hardhat: {
+      chainId: 31337,
+    },
     sepolia: {
       url: SEPOLIA_RPC_URL,
       accounts: [PRIVATE_KEY],
