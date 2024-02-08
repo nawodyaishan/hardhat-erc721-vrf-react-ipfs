@@ -1,5 +1,5 @@
 import { ethers } from "hardhat";
-import {DECIMALS, INITIAL_PRICE} from "../helper.hardhat-config";
+import { DECIMALS, INITIAL_PRICE } from "../helper.hardhat-config";
 
 async function deployMocks(): Promise<void> {
   try {
@@ -17,7 +17,10 @@ async function deployMocks(): Promise<void> {
     );
 
     console.log("Deploying MockV3Aggregator...");
-    const mockV3Aggregator = await ethers.deployContract("MockV3Aggregator",[DECIMALS, INITIAL_PRICE]);
+    const mockV3Aggregator = await ethers.deployContract("MockV3Aggregator", [
+      DECIMALS,
+      INITIAL_PRICE,
+    ]);
     await mockV3Aggregator.waitForDeployment();
     console.log(`MockV3Aggregator deployed to: ${mockV3Aggregator.target}`);
 
