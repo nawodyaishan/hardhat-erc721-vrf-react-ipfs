@@ -6,6 +6,7 @@ import {
   MetadataUtils,
   NUMBER_OF_TOKEN_URIS,
 } from '../utils/metadataUtils';
+import { VerifyUtils } from '../utils/verifyUtils';
 
 dotenv.config();
 
@@ -97,34 +98,44 @@ async function main(): Promise<void> {
     );
     console.log('🚀 - randomIpfsNft Args: subscriptionId', subscriptionId);
 
-    const randomIpfsNft = await ethers.deployContract('RandomIpfsNft', [
+    const args = [
       vrfCoordinatorV2Address,
       subscriptionId,
       networkConfig[chainId]['gasLane'],
       networkConfig[chainId]['callbackGasLimit'],
       tokenURIArray,
       networkConfig[chainId]['mintFee'],
-    ]);
+    ];
+
+    const randomIpfsNft = await ethers.deployContract('RandomIpfsNft', args);
     await randomIpfsNft.waitForDeployment();
 
-    console.log(`RandomIpfsNft Contract deployed to: ${randomIpfsNft.target}`);
-    console.log(`Transaction hash: ${randomIpfsNft.deploymentTransaction()}`);
+    console.log(
+      `✅ - RandomIpfsNft Contract deployed to: ${randomIpfsNft.target}`,
+    );
+    console.log(
+      `Transaction hash: ${randomIpfsNft.deploymentTransaction()?.wait()}`,
+    );
 
     ///////////
     /// Optional: Verifying Main Contract deployment to testnet
     ///////////
-
-    // if (!developmentChains.includes(network.name) && process.env.ETHERSCAN_API_KEY) {
-    //     console.log("Verifying...");
-    //     await verify(randomIpfsNft.address, [
-    //         vrfCoordinatorV2Address,
-    //         subscriptionId,
-    //         networkConfig[chainId]["gasLane"],
-    //         networkConfig[chainId]["mintFee"],
-    //         networkConfig[chainId]["callbackGasLimit"],
-    //         tokenUris,
-    //     ]);
-    // }
+    if (
+      !developmentChains.includes(network.name) &&
+      process.env.ETHERSCAN_API_KEY
+    ) {
+      try {
+        console.log(
+          `✅ - Verifying Main Contract deployment to testnet RandomIpfsNft Contract with: ${randomIpfsNft.target}`,
+        );
+        await VerifyUtils.verifyContract(
+          await randomIpfsNft.getAddress(),
+          args,
+        );
+      } catch (e) {
+        console.log('Verifying Failed with ', e);
+      }
+    }
   } catch (error) {
     console.error('Failed to deploy RandomIpfsNft Contract:', error);
     process.exitCode = 1;

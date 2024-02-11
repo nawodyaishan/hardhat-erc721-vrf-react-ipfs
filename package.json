@@ -18,7 +18,7 @@
     "deploy:sepolia": "yarn hardhat run --network sepolia scripts/deploy.ts",
     "deploy:fuji": "yarn hardhat run --network fuji scripts/deploy.ts",
     "deploy:mumbai": "yarn hardhat run --network mumbai scripts/deploy.ts",
-    "verify:mumbai": "yarn hardhat verify --network mumbai"
+    "verify:sepolia": "yarn hardhat verify --network sepolia"
   },
   "devDependencies": {
     "@chainlink/contracts": "^0.8.0",
