@@ -1,18 +1,18 @@
-import { HardhatUserConfig } from "hardhat/config";
-import "@nomicfoundation/hardhat-toolbox";
-import dotenv from "dotenv";
-import { EnvUtils } from "./utils/envUtils";
+import { HardhatUserConfig } from 'hardhat/config';
+import '@nomicfoundation/hardhat-toolbox';
+import dotenv from 'dotenv';
+import { EnvUtils } from './utils/envUtils';
 
 dotenv.config();
 
 // Check required environment variables
 EnvUtils.checkEnvVariables([
-  "INFURA_API_KEY",
-  "SEPOLIA_RPC_URL",
-  "AVALANCHE_FUJI_RPC_URL",
-  "PRIVATE_KEY",
-  "MUMBAI__RPC_URL",
-  "ETHERSCAN_API_KEY",
+  'INFURA_API_KEY',
+  'SEPOLIA_RPC_URL',
+  'AVALANCHE_FUJI_RPC_URL',
+  'PRIVATE_KEY',
+  'MUMBAI__RPC_URL',
+  'ETHERSCAN_API_KEY',
 ]);
 
 // Accessing Environment variables
@@ -28,13 +28,13 @@ const config: HardhatUserConfig = {
   solidity: {
     compilers: [
       {
-        version: "0.8.7",
+        version: '0.8.7',
       },
       {
-        version: "0.6.6",
+        version: '0.6.6',
       },
       {
-        version: "0.8.20",
+        version: '0.8.20',
       },
     ],
   },
