@@ -27,7 +27,7 @@ export abstract class NftMetadataGenerator {
         ' ' +
         faker.location.city() +
         ' ' +
-        faker.science.chemicalElement() +
+        faker.science.chemicalElement().name +
         ' Nebula Nexus',
       description: faker.lorem.sentence(),
       image: imageUrl,
@@ -56,9 +56,9 @@ export abstract class NftMetadataGenerator {
       name:
         faker.color.human() +
         ' ' +
-        faker.airline.airline() +
+        faker.airline.airline().name +
         ' ' +
-        faker.science.chemicalElement() +
+        faker.science.chemicalElement().name +
         ' Celestial Cipher',
       description: faker.lorem.sentence(),
       image: imageUrl,
@@ -83,7 +83,7 @@ export abstract class NftMetadataGenerator {
       name:
         faker.color.human() +
         ' ' +
-        faker.science.chemicalElement() +
+        faker.science.chemicalElement().name +
         ' Pinnacle Plasma Art',
       description: faker.lorem.sentence(),
       image: imageUrl,
