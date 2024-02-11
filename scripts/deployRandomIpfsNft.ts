@@ -1,20 +1,22 @@
 import { ethers, network } from 'hardhat';
 import { developmentChains, networkConfig } from '../helper.hardhat-config';
-import { IMetadata } from '../types/types';
 import dotenv from 'dotenv';
-import { tokenUris } from '../utils/metadataUtils';
+import { MetadataUtils, NUMBER_OF_TOKEN_URIS } from '../utils/metadataUtils';
 
 dotenv.config();
 
 const FUND_AMOUNT = '1000000000000000000000';
 
 async function main(): Promise<void> {
+  let tokenURIArray;
   try {
     const chainId = network.config.chainId || 31337;
     let vrfCoordinatorV2Address, subscriptionId;
 
     if (process.env.UPLOAD_TO_PINATA) {
-      tokenUris = await handleTokenUris();
+      tokenURIArray = await MetadataUtils.handleTokenUris();
+      if (tokenURIArray.length !== NUMBER_OF_TOKEN_URIS || !tokenURIArray)
+        throw new Error('Token URI Generation failed!');
     }
 
     ///////////
@@ -61,7 +63,7 @@ async function main(): Promise<void> {
       subscriptionId,
       networkConfig[chainId]['gasLane'],
       networkConfig[chainId]['callbackGasLimit'],
-      tokenUris,
+      tokenURIArray,
       networkConfig[chainId]['mintFee'],
       {
         gasLimit: networkConfig[chainId]['callbackGasLimit'],
@@ -71,6 +73,10 @@ async function main(): Promise<void> {
 
     console.log(`RandomIpfsNft Contract deployed to: ${randomIpfsNft.target}`);
     console.log(`Transaction hash: ${randomIpfsNft.deploymentTransaction()}`);
+
+    ///////////
+    /// Optional: Verifying Main Contract deployment to testnet
+    ///////////
 
     // if (!developmentChains.includes(network.name) && process.env.ETHERSCAN_API_KEY) {
     //     console.log("Verifying...");
