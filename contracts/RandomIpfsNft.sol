@@ -67,6 +67,15 @@ contract RandomIpfsNft is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
     string[NUMBER_OF_METADATA] internal s_tokenUris;
     uint256 internal i_mintFee;
 
+    /**
+     * @dev Initializes the contract by setting up Chainlink VRF and NFT metadata URIs.
+     * @param vrfCoordinatorV2 Address of the Chainlink VRF Coordinator.
+     * @param subscriptionId Chainlink VRF subscription ID.
+     * @param gasLane Chainlink VRF gas lane key hash.
+     * @param callbackGasLimit Gas limit for the callback function in the VRF request.
+     * @param tokenUris Array of token URI strings for the NFT metadata.
+     * @param mintFee Fee required to mint an NFT.
+     */
     constructor(
         address vrfCoordinatorV2,
         uint64 subscriptionId,
@@ -90,7 +99,11 @@ contract RandomIpfsNft is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
     ///////////////////
     // Main Functions
     ///////////////////
-
+    /**
+     * @dev Requests a new random NFT minting. Requires payment of minting fee.
+     * Emits a {NftRequestedWithNewIdFromVRF} event.
+     * @return requestId The request ID returned by Chainlink VRF.
+     */
     function requestNft() public payable returns (uint256 requestId) {
         if (msg.value < i_mintFee) {
             revert RandomIpfsNft_InsufficientETHSent();
@@ -106,6 +119,13 @@ contract RandomIpfsNft is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
         emit NftRequestedWithNewIdFromVRF(requestId, msg.sender);
     }
 
+    /**
+     * @dev Callback function used by VRF Coordinator to supply randomness.
+     * Mints an NFT to the original requestor with a randomly selected token URI.
+     * Emits an {NFTMinted} event.
+     * @param requestId ID of the VRF request.
+     * @param randomWords Array containing the random result supplied by VRF.
+     */
     function fulfillRandomWords(
         uint256 requestId,
         uint256[] memory randomWords
@@ -126,6 +146,10 @@ contract RandomIpfsNft is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
         s_tokenCounter++;
     }
 
+    /**
+     * @dev Allows the contract owner to withdraw the contract balance.
+     * Reverts if the transfer fails.
+     */
     function withdraw() public onlyOwner {
         uint256 amount = address(this).balance;
         (bool success, ) = payable(msg.sender).call{value: amount}('');
