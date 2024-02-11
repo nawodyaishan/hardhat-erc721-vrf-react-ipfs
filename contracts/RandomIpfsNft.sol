@@ -13,7 +13,7 @@ import '@chainlink/contracts/src/v0.8/vrf/VRFConsumerBaseV2.sol';
  */
 contract RandomIpfsNft is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
     // ChainLink VRF Random Number
-    // Random NFT from 3 metadata asset array using ChainLink VRF
+    // Random NFT from NUMBER_OF_METADATA asset array using ChainLink VRF
     // NebulaNexusToken
     // CelestialCipherNFT
     // PinnaclePlasmaArt
@@ -37,6 +37,7 @@ contract RandomIpfsNft is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
     uint256 internal constant MAX_CHANCE_VALUE = 100;
     uint16 private constant REQUEST_CONFIRMATIONS = 3;
     uint32 private constant NUM_WORDS = 1;
+    uint32 private constant NUMBER_OF_METADATA = 20;
 
     ///////////////////
     // VRF Helpers
@@ -57,13 +58,13 @@ contract RandomIpfsNft is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
         uint256 requestId,
         address senderAddress
     );
-    event NFTMinted(NftType nftType, address nftOwner);
+    event NFTMinted(uint256 newTokenID, address nftOwner);
 
     ///////////////////
     // NFT Related Variables
     ///////////////////
     uint256 public s_tokenCounter;
-    string[] internal s_tokenUris;
+    string[NUMBER_OF_METADATA] internal s_tokenUris;
     uint256 internal i_mintFee;
 
     constructor(
@@ -71,7 +72,7 @@ contract RandomIpfsNft is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
         uint64 subscriptionId,
         bytes32 gasLane,
         uint32 callbackGasLimit,
-        string[3] memory tokenUris,
+        string[NUMBER_OF_METADATA] memory tokenUris,
         uint256 mintFee
     )
         VRFConsumerBaseV2(vrfCoordinatorV2)
@@ -113,20 +114,16 @@ contract RandomIpfsNft is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
         uint256 newTokenID = s_tokenCounter;
 
         // Assigning NFT Metadata types
-        uint256 moddedRange = randomWords[0] % MAX_CHANCE_VALUE;
-        NftType nftTypeFromModdedRange = getNftTypeFromModdedRange(moddedRange);
+        uint256 moddedIndex = randomWords[0] % NUMBER_OF_METADATA;
+        string memory tokenURI = s_tokenUris[moddedIndex];
 
         // Minting and URI Logic
         _safeMint(nftOwner, newTokenID);
-        _setTokenURI(newTokenID, s_tokenUris[uint256(nftTypeFromModdedRange)]);
-        emit NFTMinted(nftTypeFromModdedRange, nftOwner);
+        _setTokenURI(newTokenID, tokenURI);
+        emit NFTMinted(newTokenID, nftOwner);
 
         // incrementing Token Id
         s_tokenCounter++;
-    }
-
-    function getChanceArray() public pure returns (uint256[3] memory chances) {
-        chances = [10, 30, MAX_CHANCE_VALUE];
     }
 
     function withdraw() public onlyOwner {
@@ -135,24 +132,6 @@ contract RandomIpfsNft is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
         if (!success) {
             revert RandomIpfsNft_TransferFailed();
         }
-    }
-
-    function getNftTypeFromModdedRange(
-        uint256 moddedRange
-    ) public pure returns (NftType nftType) {
-        uint256 cumulativeSum = 0;
-        uint256[3] memory chanceArray = getChanceArray();
-        for (uint256 i = 0; i < chanceArray.length; i++) {
-            if (
-                moddedRange >= cumulativeSum &&
-                moddedRange < (cumulativeSum + chanceArray[i])
-            ) {
-                nftType = NftType(i);
-                return nftType;
-            }
-            cumulativeSum += chanceArray[i];
-        }
-        revert RandomIpfsNft_RangeOutOfBounds();
     }
 
     function getMintFee() public view returns (uint256 mintFee) {
