@@ -14,9 +14,9 @@ export interface IMetadata {
 }
 
 export enum NftType {
-  NebulaNexusToken = 1,
-  CelestialCipherNFT = 2,
-  PinnaclePlasmaArt = 3,
+  NebulaNexusToken,
+  CelestialCipherNFT,
+  PinnaclePlasmaArt,
 }
 
 export type NetworkConfigItem = {

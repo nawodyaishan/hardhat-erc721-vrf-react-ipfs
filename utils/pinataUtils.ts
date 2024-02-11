@@ -3,6 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import { IMetadata } from '../types/types';
 import dotenv from 'dotenv';
+import { faker } from '@faker-js/faker';
 
 dotenv.config();
 
@@ -15,8 +16,16 @@ export abstract class PinataUtils {
   public static async uploadImageToIPFS(imagePath: string): Promise<string> {
     try {
       const fullImagePath = path.resolve(imagePath);
+      const filename = path.basename(fullImagePath);
       const readableStreamForFile = fs.createReadStream(fullImagePath);
-      const result = await pinata.pinFileToIPFS(readableStreamForFile, {});
+      const result = await pinata.pinFileToIPFS(readableStreamForFile, {
+        pinataMetadata: {
+          name: filename,
+        },
+        pinataOptions: {
+          cidVersion: 0,
+        },
+      });
       return `https://ipfs.io/ipfs/${result.IpfsHash}`;
     } catch (error) {
       console.error('Error uploading image to IPFS:', error);

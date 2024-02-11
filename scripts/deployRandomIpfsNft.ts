@@ -14,6 +14,7 @@ async function main(): Promise<void> {
     let vrfCoordinatorV2Address, subscriptionId;
 
     if (process.env.UPLOAD_TO_PINATA) {
+      console.log('🚀 - Storing Metadata');
       tokenURIArray = await MetadataUtils.handleTokenUris();
       if (tokenURIArray.length !== NUMBER_OF_TOKEN_URIS || !tokenURIArray)
         throw new Error('Token URI Generation failed!');
@@ -22,6 +23,7 @@ async function main(): Promise<void> {
     ///////////
     /// Deploying Mock Contracts and Get dependencies
     ///////////
+    console.log('🚀 - Deploying Mock Contracts and Get dependencies');
 
     if (developmentChains.includes(network.name)) {
       const vrfCoordinatorV2Mock = await ethers.deployContract(
@@ -47,8 +49,9 @@ async function main(): Promise<void> {
           console.log(error);
         }
       }
-
+      console.log('🚀 - Handling VRF Subscription');
       await vrfCoordinatorV2Mock.fundSubscription(subscriptionId, FUND_AMOUNT);
+      console.log('🚀 - Handling VRF Subscription - Complete');
     } else {
       vrfCoordinatorV2Address = networkConfig[chainId].vrfCoordinatorV2;
       subscriptionId = networkConfig[chainId].subscriptionId;

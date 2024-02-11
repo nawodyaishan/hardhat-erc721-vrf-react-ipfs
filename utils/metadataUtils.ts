@@ -23,19 +23,26 @@ export abstract class MetadataUtils {
       .slice(0, NUMBER_OF_TOKEN_URIS)
       .value();
 
+    console.log('🚀 - image File Paths', imageFilePaths);
+
     const imageUploadResponses = await this.storeImages(imageFilePaths);
 
     _.each(imageUploadResponses, async (imageUri, index) => {
-      const nftType = _.values(NftType)[
-        index % _.values(NftType).length
-      ] as NftType;
+      const nftTypeKeys = Object.keys(NftType).filter((key) =>
+        isNaN(Number(key)),
+      );
+      const nftTypeIndex = index % nftTypeKeys.length;
+      const nftTypeKey = nftTypeKeys[nftTypeIndex];
+      const nftType = this.mapStringKeyToEnumValue(nftTypeKey, NftType);
       const metadata: IMetadata = NftMetadataGenerator.createRandomNftMetadata(
         nftType,
         imageUri,
       );
-
-      console.log(`Uploading metadata for ${metadata.name}...`);
+      console.log(`🎯 - Uploading metadata for ${metadata.name}...`);
       const metadataUri = await PinataUtils.uploadMetadataToIPFS(metadata);
+      console.log(
+        `🎯 - Completing creation of metadata for ${metadata.name}...`,
+      );
       tokenUris.push(metadataUri);
     });
 
@@ -49,5 +56,15 @@ export abstract class MetadataUtils {
       PinataUtils.uploadImageToIPFS(filePath),
     );
     return Promise.all(uploadPromises);
+  }
+
+  public static mapStringKeyToEnumValue<T>(
+    key: string,
+    enumType: T,
+  ): T[keyof T] {
+    if (!(key in NftType)) {
+      throw new Error(`Key '${key}' does not exist in the enum.`);
+    }
+    return enumType[key as keyof T];
   }
 }

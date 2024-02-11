@@ -7,6 +7,7 @@ export abstract class NftMetadataGenerator {
     nftType: NftType,
     imageUrl: string,
   ): IMetadata {
+    console.log('🚀 - Creating RandomNft Metadata');
     switch (nftType) {
       case NftType.NebulaNexusToken:
         return this.nebulaNexusTokenStats(imageUrl);
