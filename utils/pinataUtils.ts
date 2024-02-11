@@ -1,57 +1,30 @@
-// const pinataSDK = require("@pinata/sdk")
-// const fs = require("fs")
-// const path = require("path")
-// require("dotenv").config()
-//
-// const pinataApiKey = process.env.PINATA_API_KEY || ""
-// const pinataApiSecret = process.env.PINATA_API_SECRET || ""
-// const pinata = new pinataSDK(pinataApiKey, pinataApiSecret)
-//
-// async function storeImages(imagesFilePath) {
-//     const fullImagesPath = path.resolve(imagesFilePath)
-//
-//     // Filter the files in case there's a file that in not a .png, .jpg or .jpeg
-//     const files = fs.readdirSync(fullImagesPath).filter((file) => (/\b.png|\b.jpg|\b.jpeg/).test(file))
-//
-//     const responses = []
-//     console.log("Uploading to IPFS")
-//
-//     for (const fileIndex in files) {
-//         const readableStreamForFile = fs.createReadStream(`${fullImagesPath}/${files[fileIndex]}`)
-//         const options = {
-//             pinataMetadata: {
-//                 name: files[fileIndex],
-//             },
-//         }
-//         try {
-//             await pinata
-//                 .pinFileToIPFS(readableStreamForFile, options)
-//                 .then((result) => {
-//                     responses.push(result)
-//                 })
-//                 .catch((err) => {
-//                     console.log(err)
-//                 })
-//         } catch (error) {
-//             console.log(error)
-//         }
-//     }
-//     return { responses, files }
-// }
-//
-// async function storeTokenUriMetadata(metadata) {
-//     const options = {
-//         pinataMetadata: {
-//             name: metadata.name,
-//         },
-//     }
-//     try {
-//         const response = await pinata.pinJSONToIPFS(metadata, options)
-//         return response
-//     } catch (error) {
-//         console.log(error)
-//     }
-//     return null
-// }
-//
-// module.exports = { storeImages, storeTokenUriMetadata }
+import fs from 'fs';
+import { IMetadata } from '../types/types';
+import path from 'path';
+
+const pinata = pinata;
+
+export abstract class PinataUtils {
+  public static async uploadImageToIPFS(imagePath: string): Promise<string> {
+    try {
+      const fullImagesPath = path.resolve(imagePath);
+      const readableStreamForFile = fs.createReadStream(fullImagesPath);
+      const result = await pinata.pinFileToIPFS(readableStreamForFile);
+      return `https://ipfs.io/ipfs/${result.IpfsHash}`;
+    } catch (error) {
+      console.error('Error uploading image to IPFS:', error);
+      throw new Error('Failed to upload image to IPFS.');
+    }
+  }
+  public static async uploadMetadataToIPFS(
+    metadata: IMetadata,
+  ): Promise<string> {
+    try {
+      const result = await pinata.pinJSONToIPFS(metadata);
+      return `https://ipfs.io/ipfs/${result.IpfsHash}`;
+    } catch (error) {
+      console.error('Error uploading metadata to IPFS:', error);
+      throw new Error('Failed to upload metadata to IPFS.');
+    }
+  }
+}
