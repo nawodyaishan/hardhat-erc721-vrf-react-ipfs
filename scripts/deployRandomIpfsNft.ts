@@ -1,7 +1,11 @@
 import { ethers, network } from 'hardhat';
 import { developmentChains, networkConfig } from '../helper.hardhat-config';
 import dotenv from 'dotenv';
-import { MetadataUtils, NUMBER_OF_TOKEN_URIS } from '../utils/metadataUtils';
+import {
+  alreadyUploadedTokenUris,
+  MetadataUtils,
+  NUMBER_OF_TOKEN_URIS,
+} from '../utils/metadataUtils';
 
 dotenv.config();
 
@@ -10,47 +14,73 @@ const FUND_AMOUNT = '1000000000000000000000';
 async function main(): Promise<void> {
   let tokenURIArray;
   try {
-    const chainId = network.config.chainId || 31337;
+    const hardhatNetwork = await ethers.provider.getNetwork();
+    console.log('⛓️ - Network Name', hardhatNetwork.name);
+
+    const chainId = ethers.toNumber(hardhatNetwork.chainId) || 31337;
     let vrfCoordinatorV2Address, subscriptionId;
 
     if (process.env.UPLOAD_TO_PINATA) {
-      console.log('🚀 - Storing Metadata');
-      tokenURIArray = await MetadataUtils.handleTokenUris();
-      if (tokenURIArray.length !== NUMBER_OF_TOKEN_URIS || !tokenURIArray)
-        throw new Error('Token URI Generation failed!');
+      if (alreadyUploadedTokenUris.length === NUMBER_OF_TOKEN_URIS) {
+        console.log('🚀 - Using alreadyUploadedTokenUris Metadata');
+        tokenURIArray = alreadyUploadedTokenUris;
+      } else {
+        console.log('🚀 - Storing Metadata');
+        tokenURIArray = await MetadataUtils.handleTokenUris();
+        if (tokenURIArray.length !== NUMBER_OF_TOKEN_URIS || !tokenURIArray)
+          throw new Error('Token URI Generation failed!');
+      }
     }
 
     ///////////
     /// Deploying Mock Contracts and Get dependencies
     ///////////
     console.log('🚀 - Deploying Mock Contracts and Get dependencies');
-
-    if (developmentChains.includes(network.name)) {
+    if (process.env.IS_LOCAL && developmentChains.includes(network.name)) {
+      console.log('🚀 - Preparing Local Mock Deployment');
       const vrfCoordinatorV2Mock = await ethers.deployContract(
         'VRFCoordinatorV2Mock',
+        ['250000000000000000', 1e9],
       );
-      vrfCoordinatorV2Address = vrfCoordinatorV2Mock.getAddress();
+      await vrfCoordinatorV2Mock.waitForDeployment();
+      vrfCoordinatorV2Address = await vrfCoordinatorV2Mock.getAddress();
+      console.log('✅ - vrfCoordinatorV2Mock Address', vrfCoordinatorV2Address);
+
       const transactionResponse =
         await vrfCoordinatorV2Mock.createSubscription();
+      // console.log('✅ - transactionResponse', transactionResponse);
       const transactionReceipt = await transactionResponse.wait();
-      let subscriptionId;
+
+      let subscriptionIdInBigInt;
       if (!transactionReceipt) throw new Error('transactionReceipt is null');
       for (const log of transactionReceipt.logs) {
         try {
           const compatibleLog = { ...log, topics: [...log.topics] };
           const parsedLog =
             vrfCoordinatorV2Mock.interface.parseLog(compatibleLog);
+          console.log('📣 - Parsed Log : ', parsedLog);
           if (!parsedLog) throw new Error('parsedLog is null');
           if (parsedLog.name === 'SubscriptionCreated') {
-            subscriptionId = parsedLog.args.subId.toString();
+            console.log(
+              '📣 - Parsed Log parsedLog.args.subId : ',
+              parsedLog.args.subId,
+            );
+            subscriptionIdInBigInt = parsedLog.args.subId;
+            subscriptionId = ethers.toNumber(parsedLog.args.subId);
             break;
           }
         } catch (error) {
           console.log(error);
         }
       }
-      console.log('🚀 - Handling VRF Subscription');
-      await vrfCoordinatorV2Mock.fundSubscription(subscriptionId, FUND_AMOUNT);
+      console.log(
+        '🚀 - Handling VRF subscriptionId InBigInt',
+        subscriptionIdInBigInt,
+      );
+      await vrfCoordinatorV2Mock.fundSubscription(
+        subscriptionIdInBigInt,
+        FUND_AMOUNT,
+      );
       console.log('🚀 - Handling VRF Subscription - Complete');
     } else {
       vrfCoordinatorV2Address = networkConfig[chainId].vrfCoordinatorV2;
@@ -61,6 +91,12 @@ async function main(): Promise<void> {
     /// Deploying Main Contract
     ///////////
     console.log('Deploying RandomIpfsNft contract...');
+    console.log(
+      '🚀 - randomIpfsNft Args: vrfCoordinatorV2Address',
+      vrfCoordinatorV2Address,
+    );
+    console.log('🚀 - randomIpfsNft Args: subscriptionId', subscriptionId);
+
     const randomIpfsNft = await ethers.deployContract('RandomIpfsNft', [
       vrfCoordinatorV2Address,
       subscriptionId,
@@ -68,9 +104,6 @@ async function main(): Promise<void> {
       networkConfig[chainId]['callbackGasLimit'],
       tokenURIArray,
       networkConfig[chainId]['mintFee'],
-      {
-        gasLimit: networkConfig[chainId]['callbackGasLimit'],
-      },
     ]);
     await randomIpfsNft.waitForDeployment();
 
