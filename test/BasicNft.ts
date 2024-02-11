@@ -9,9 +9,8 @@ describe('BasicNft', function () {
 
   beforeEach(async function () {
     [owner, addr1] = await ethers.getSigners();
-
-    const BasicNftFactory = await ethers.getContractFactory('BasicNft', owner);
-    basicNft = await BasicNftFactory.deploy();
+    basicNft = await ethers.deployContract('BasicNft', owner);
+    await basicNft.waitForDeployment();
   });
 
   describe('Deployment', function () {
