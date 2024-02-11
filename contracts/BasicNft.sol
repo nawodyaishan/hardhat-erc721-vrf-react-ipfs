@@ -2,7 +2,7 @@
 pragma solidity ^0.8.20;
 
 // Importing ERC721 standard contract from OpenZeppelin library
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import '@openzeppelin/contracts/token/ERC721/ERC721.sol';
 
 /**
  * @title BasicNft
@@ -12,7 +12,7 @@ contract BasicNft is ERC721 {
     // Token URI for all tokens minted by this contract
     // @notice IPFS URI for metadata associated with this NFT
     string public constant TOKEN_URI =
-        "ipfs://bafybeig37ioir76s7mg5oobetncojcm3c3hxasyd4rvid4jqhy4gkaheg4/?filename=0-PUG.json";
+        'ipfs://bafybeig37ioir76s7mg5oobetncojcm3c3hxasyd4rvid4jqhy4gkaheg4/?filename=0-PUG.json';
 
     // Counter to keep track of token ids
     // @notice Keeps track of the number of tokens minted
@@ -23,7 +23,7 @@ contract BasicNft is ERC721 {
     /**
      * @dev Initializes the contract by setting a `name` and a `symbol` to the token collection.
      */
-    constructor() ERC721("Dogie", "DOG") {
+    constructor() ERC721('Dogie', 'DOG') {
         s_tokenCounter = 0;
     }
 

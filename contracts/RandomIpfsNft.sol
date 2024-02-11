@@ -2,10 +2,10 @@
 pragma solidity ^0.8.20;
 
 // Importing ERC721 standard contract from OpenZeppelin library
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
-import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
-import "@chainlink/contracts/src/v0.8/vrf/VRFConsumerBaseV2.sol";
+import '@openzeppelin/contracts/access/Ownable.sol';
+import '@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol';
+import '@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol';
+import '@chainlink/contracts/src/v0.8/vrf/VRFConsumerBaseV2.sol';
 
 /**
  * @title RandomIpfsNft
@@ -72,12 +72,11 @@ contract RandomIpfsNft is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
         bytes32 gasLane,
         uint32 callbackGasLimit,
         string[3] memory tokenUris,
-        uint256 mintFee,
-        address owner
+        uint256 mintFee
     )
         VRFConsumerBaseV2(vrfCoordinatorV2)
-        ERC721("Random On Chain NFT", "RR")
-        Ownable(owner)
+        ERC721('Random On Chain NFT', 'RR')
+        Ownable(msg.sender)
     {
         i_vrfCoordinator = VRFCoordinatorV2Interface(vrfCoordinatorV2);
         i_gasLane = gasLane;
@@ -132,7 +131,7 @@ contract RandomIpfsNft is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
 
     function withdraw() public onlyOwner {
         uint256 amount = address(this).balance;
-        (bool success, ) = payable(msg.sender).call{value: amount}("");
+        (bool success, ) = payable(msg.sender).call{value: amount}('');
         if (!success) {
             revert RandomIpfsNft_TransferFailed();
         }
