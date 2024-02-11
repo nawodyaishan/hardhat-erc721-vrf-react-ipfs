@@ -9,7 +9,7 @@ import '@chainlink/contracts/src/v0.8/vrf/VRFConsumerBaseV2.sol';
 
 /**
  * @title RandomIpfsNft
- * @dev Simple ERC721 Token example, with mintable token functionality.
+ * @dev ERC721 Token with mintable token functionality using ChainLink VRF for randomness.
  */
 contract RandomIpfsNft is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
     // ChainLink VRF Random Number

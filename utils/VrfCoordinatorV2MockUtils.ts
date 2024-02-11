@@ -31,7 +31,9 @@ export class VrfCoordinatorV2MockUtils {
       subscriptionIdInBigNumber,
       fundAmount,
     );
-    console.log(`💰 Funded subscription ${subscriptionId} with ${fundAmount} wei`);
+    console.log(
+      `💰 Funded subscription ${subscriptionId} with ${fundAmount} wei`,
+    );
 
     return {
       vrfCoordinatorV2Address: await vrfCoordinatorV2Mock.getAddress(),
