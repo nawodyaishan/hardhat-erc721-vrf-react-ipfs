@@ -72,8 +72,9 @@ async function main(): Promise<void> {
       !developmentChains.includes(network.name) &&
       process.env.ETHERSCAN_API_KEY
     ) {
-      console.log(`✅ - Verifying RandomIpfsNft Contract...}`);
+      console.log(`🚀 - Verifying RandomIpfsNft Contract...}`);
       await VerifyUtils.verifyContract(deployedContractAddress, args);
+      console.log(`✅ - RandomIpfsNft Contract Verified!}`);
     }
   } catch (error) {
     console.error('❌ Deployment failed:', error);
