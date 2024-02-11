@@ -5,16 +5,19 @@ import { SignerWithAddress } from '@nomicfoundation/hardhat-ethers/signers';
 import { networkConfig } from '../helper.hardhat-config';
 import { TestHelpers } from './helpers/testHelpers';
 
-describe('RandomIpfsNft', function() {
+describe('RandomIpfsNft', function () {
   let randomIpfsNft: RandomIpfsNft;
   let vrfCoordinatorV2Mock: VRFCoordinatorV2Mock;
   let owner: SignerWithAddress, addr1: SignerWithAddress;
-  const subscriptionId =1;
-  const chainId = network.config.chainId!
+  const subscriptionId = 1;
+  const chainId = network.config.chainId!;
 
-  beforeEach(async function() {
+  beforeEach(async function () {
     [owner, addr1] = await ethers.getSigners();
-    vrfCoordinatorV2Mock = await ethers.deployContract('VRFCoordinatorV2Mock', ['250000000000000000', 1e9]);
+    vrfCoordinatorV2Mock = await ethers.deployContract('VRFCoordinatorV2Mock', [
+      '250000000000000000',
+      1e9,
+    ]);
     await vrfCoordinatorV2Mock.waitForDeployment();
 
     const args = [
@@ -30,17 +33,16 @@ describe('RandomIpfsNft', function() {
     await randomIpfsNft.waitForDeployment();
   });
 
-  describe('Deployment', function() {
-    it('Should correctly set the initial token counter to 0 ✅', async function() {
+  describe('Deployment', function () {
+    it('Should correctly set the initial token counter to 0 ✅', async function () {
       expect(await randomIpfsNft.getTokenCounter()).to.equal(0);
     });
 
-    it('Should have correct name and symbol ✅', async function() {
+    it('Should have correct name and symbol ✅', async function () {
       expect(await randomIpfsNft.name()).to.equal('Random On Chain NFT');
       expect(await randomIpfsNft.symbol()).to.equal('RR');
     });
   });
-
 });
 
 //   describe('Deployment', function() {
