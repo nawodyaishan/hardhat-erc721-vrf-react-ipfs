@@ -3,6 +3,7 @@ import {
   type BaseError,
   useAccount,
   useWaitForTransactionReceipt,
+  useWatchContractEvent,
   useWriteContract,
 } from 'wagmi';
 import { abi } from '../../../../data/contract-data/abi.ts';
@@ -81,6 +82,48 @@ export default function MintNFT() {
         window.open(`https://sepolia.etherscan.io/tx/${hash}`, '_blank'),
     });
   }, [hash]);
+
+  useWatchContractEvent({
+    address: '0x015c1236978013b69680AdFa7EB07167BBc8F630',
+    abi,
+    eventName: 'NFTMinted',
+    onLogs(logs) {
+      console.log('NFTMinted New logs!', logs);
+      showToast({
+        variant: 'default',
+        description: logs[0].eventName,
+        title: 'Event: NFTMinted',
+      });
+    },
+  });
+
+  useWatchContractEvent({
+    address: '0x015c1236978013b69680AdFa7EB07167BBc8F630',
+    abi,
+    eventName: 'OwnershipTransferred',
+    onLogs(logs) {
+      console.log('OwnershipTransferred New logs!', logs);
+      showToast({
+        variant: 'default',
+        description: logs[0].eventName,
+        title: 'OwnershipTransferred Event',
+      });
+    },
+  });
+
+  useWatchContractEvent({
+    address: '0x015c1236978013b69680AdFa7EB07167BBc8F630',
+    abi,
+    eventName: 'NftRequestedWithNewIdFromVRF',
+    onLogs(logs) {
+      console.log('NftRequestedWithNewIdFromVRF New logs!', logs);
+      showToast({
+        variant: 'default',
+        description: logs[0].eventName,
+        title: 'Event: NftRequestedWithNewIdFromVRF',
+      });
+    },
+  });
 
   return (
     <Card className={'flex flex-col justify-center items-center p-10'}>
