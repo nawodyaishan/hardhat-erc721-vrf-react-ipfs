@@ -1,5 +1,6 @@
 // Import the NetworkConfigInfo type from the types module.
 import { NetworkConfigInfo } from './types/types';
+import { ethers } from 'hardhat';
 
 // Define the networkConfig object with configurations for different blockchain networks.
 export const networkConfig: NetworkConfigInfo = {
@@ -21,7 +22,7 @@ export const networkConfig: NetworkConfigInfo = {
     gasLane:
       '0x474e34a077df58807dbe9c96d3c009b23b3c6d0cce433e59bbf5b34f823bc56c', // The gas lane identifier for Chainlink VRF on Sepolia.
     callbackGasLimit: '500000', // The gas limit for callback transactions on Sepolia.
-    mintFee: '10000000000000000', // The minting fee (0.01 ETH) for NFTs or other transactions on Sepolia.
+    mintFee: ethers.parseUnits('0.01','ether').toString(), // The minting fee (0.01 ETH) for NFTs or other transactions on Sepolia.
     subscriptionId: '9302', // Manual VRF subscription ID for Chainlink VRF on Sepolia.
   },
 };
