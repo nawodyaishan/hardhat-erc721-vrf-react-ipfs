@@ -70,7 +70,8 @@ async function main(): Promise<void> {
     // Contract Verification
     if (
       !developmentChains.includes(network.name) &&
-      process.env.ETHERSCAN_API_KEY && process.env.SHOULD_VERIFY_CONTRACT_WITH_DEPLOY
+      process.env.ETHERSCAN_API_KEY &&
+      process.env.SHOULD_VERIFY_CONTRACT_WITH_DEPLOY
     ) {
       console.log(`🚀 - Verifying RandomIpfsNft Contract...}`);
       await VerifyUtils.verifyContract(deployedContractAddress, args);
