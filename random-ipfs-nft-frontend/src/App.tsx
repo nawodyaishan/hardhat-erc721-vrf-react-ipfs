@@ -3,21 +3,46 @@ import { WagmiProvider } from 'wagmi';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { config } from '../config.ts';
 import { ConnectKitButton, ConnectKitProvider } from 'connectkit';
-import MintNftCard from '@/components/mintNftCard.tsx';
+import SendTransactionCard from './components/sendTransactionCard.tsx';
 
 const queryClient = new QueryClient();
 
 // Connect to contract
 // Pass deps to MintNftCard as props
 
-
 function App() {
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-        <ConnectKitProvider>
+        <ConnectKitProvider
+          theme="retro"
+          mode="dark"
+          options={{
+            embedGoogleFonts: true,
+            disclaimer: (
+              <>
+                By connecting your wallet you agree to the{' '}
+                <a
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href="https://en.wikipedia.org/wiki/Terms_of_service"
+                >
+                  Terms of Service
+                </a>{' '}
+                and{' '}
+                <a
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href="https://en.wikipedia.org/wiki/Privacy_policy"
+                >
+                  Privacy Policy
+                </a>
+              </>
+            ),
+          }}
+        >
           <ConnectKitButton />
-          <MintNftCard />
+          <SendTransactionCard />
         </ConnectKitProvider>
       </QueryClientProvider>
     </WagmiProvider>
