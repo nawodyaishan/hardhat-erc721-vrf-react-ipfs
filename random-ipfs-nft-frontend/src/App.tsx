@@ -9,6 +9,7 @@ import WalletConnectCard from '@/components/features/contract-interactions/Walle
 import { Toaster } from '@/components/ui/toaster.tsx';
 import { ModeToggle } from './components/ui/mode-toggle.tsx';
 import { useEffect } from 'react';
+import WithdrawCard from '@/components/features/contract-interactions/WithdrawCard.tsx';
 
 const queryClient = new QueryClient();
 function App() {
@@ -54,6 +55,7 @@ function App() {
             <WalletConnectCard />
             <MintNFT />
             <SendTransactionCard />
+            <WithdrawCard/>
           </div>
           <Toaster />
         </ConnectKitProvider>
