@@ -7,6 +7,10 @@ import MintNftCard from '@/components/mintNftCard.tsx';
 
 const queryClient = new QueryClient();
 
+// Connect to contract
+// Pass deps to MintNftCard as props
+
+
 function App() {
   return (
     <WagmiProvider config={config}>
