@@ -12,10 +12,12 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card.tsx';
+import { useToastHelper } from '@/hooks/use-toast-helper.tsx';
+import { useEffect } from 'react';
 
 export default function MintNFT() {
   const { data: hash, error, isPending, writeContract } = useWriteContract();
-
+  const showToast = useToastHelper();
   const minFee = '0.01';
   // const deployedContractAddress = import.meta.env.DEPLOYED_CONTRACT;
 
@@ -35,6 +37,45 @@ export default function MintNFT() {
     });
   }
 
+  useEffect(() => {
+    if (isConfirmed) {
+      showToast({
+        variant: 'default',
+        description: `Successful operation`,
+        title: 'Minting NFT Successful',
+        actionText: 'Visit Etherscan',
+        altTextAction: 'View Etherscan Transaction',
+        onClickAction: () =>
+          window.open(`https://sepolia.etherscan.io/tx/${hash}`, '_blank'),
+      });
+    }
+  }, [isConfirmed]);
+
+  useEffect(() => {
+    if (error) {
+      showToast({
+        variant: 'destructive',
+        description: `Error: ${(error as BaseError).shortMessage || error.message}`,
+        title: 'Minting NFT Failed',
+        actionText: 'Retry',
+        altTextAction: 'Retry',
+        onClickAction: submit,
+      });
+    }
+  }, [error]);
+
+  useEffect(() => {
+    showToast({
+      variant: 'default',
+      description: `Mint process started`,
+      title: 'Minting NFT',
+      actionText: 'Visit Etherscan',
+      altTextAction: 'View Etherscan Transaction',
+      onClickAction: () =>
+        window.open(`https://sepolia.etherscan.io/tx/${hash}`, '_blank'),
+    });
+  }, [hash]);
+
   return (
     <Card className={'flex flex-col justify-center items-center p-10'}>
       <CardHeader className={'flex-col items-center gap-4'}>
@@ -48,12 +89,6 @@ export default function MintNFT() {
       >
         {isPending ? 'Confirming...' : 'Mint'}{' '}
       </Button>
-      {hash && <div>Transaction Hash: {hash}</div>}
-      {isConfirming && <div>Waiting for confirmation...</div>}
-      {isConfirmed && <div>Transaction confirmed.</div>}
-      {error && (
-        <div>Error: {(error as BaseError).shortMessage || error.message}</div>
-      )}
     </Card>
   );
 }

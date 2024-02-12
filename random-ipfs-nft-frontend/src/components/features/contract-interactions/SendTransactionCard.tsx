@@ -16,7 +16,6 @@ export default function SendTransaction() {
     isPending,
     sendTransaction,
   } = useSendTransaction();
-
   async function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const formData = new FormData(e.target as HTMLFormElement);
@@ -24,16 +23,12 @@ export default function SendTransaction() {
     const value = formData.get('value') as string;
     sendTransaction({ to, value: parseEther(value) });
   }
-
   const { isLoading: isConfirming, isSuccess: isConfirmed } =
     useWaitForTransactionReceipt({
       hash,
     });
-
   return (
-    <Card
-      className={'flex flex-col justify-center items-center p-5 space-y-2'}
-    >
+    <Card className={'flex flex-col justify-center items-center p-5 space-y-2'}>
       <CardHeader className={'flex-col items-center'}>
         <CardTitle>Send Transaction</CardTitle>
       </CardHeader>

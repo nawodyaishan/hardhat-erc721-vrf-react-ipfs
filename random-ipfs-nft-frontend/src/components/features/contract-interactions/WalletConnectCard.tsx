@@ -20,8 +20,7 @@ export default function WalletConnectCard() {
     if (account.isConnected)
       showToast({
         variant: 'default',
-        description: `Account`,
-        title: 'Wallet Connection successful',
+        description: `Wallet Connection successful`,
       });
   }, [account.isConnected]);
 

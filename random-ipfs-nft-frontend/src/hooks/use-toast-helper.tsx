@@ -3,7 +3,7 @@ import { ToastAction } from '@/components/ui/toast.tsx';
 
 export interface ToastParams {
   variant: 'default' | 'destructive' | null | undefined;
-  title: string;
+  title?: string;
   description: string;
   actionText?: string;
   onClickAction?: () => void;
@@ -23,7 +23,7 @@ export const useToastHelper = () => {
   }: ToastParams) => {
     toast({
       variant,
-      title,
+      title: title ? title : undefined,
       description,
       action:
         actionText && altTextAction && onClickAction ? (
