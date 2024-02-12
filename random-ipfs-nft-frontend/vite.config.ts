@@ -9,4 +9,22 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          lodash: [
+            'wagmi',
+            'connectkit',
+            '@tanstack/react-query',
+            'react-hook-form',
+            'clsx',
+            'react',
+            'zod',
+            'viem',
+          ],
+        },
+      },
+    },
+  },
 });

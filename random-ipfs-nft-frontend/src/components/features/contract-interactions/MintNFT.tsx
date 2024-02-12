@@ -84,10 +84,14 @@ export default function MintNFT() {
       </CardHeader>
       <Button
         onClick={() => submit()}
-        disabled={isPending && isConfirming}
+        disabled={isPending || isConfirming}
         variant={'destructive'}
       >
-        {isPending ? 'Confirming...' : 'Mint'}{' '}
+        {isPending || isConfirming
+          ? isPending
+            ? 'Pending Transaction..'
+            : 'Transaction is processing...'
+          : 'Mint'}{' '}
       </Button>
     </Card>
   );
