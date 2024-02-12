@@ -8,13 +8,17 @@ import MintNFT from '@/components/features/contract-interactions/MintNFT.tsx';
 import WalletConnectCard from '@/components/features/contract-interactions/WalletConnectCard.tsx';
 import { Toaster } from '@/components/ui/toaster.tsx';
 import { ModeToggle } from './components/ui/mode-toggle.tsx';
+import { useEffect } from 'react';
 
 const queryClient = new QueryClient();
-
-// Connect to contract
-// Pass deps to MintNftCard as props
-
 function App() {
+  useEffect(() => {
+    console.log(
+      '🚀 - WALLET_CONNECT_PROJECT_ID',
+      import.meta.env.WALLET_CONNECT_PROJECT_ID,
+    );
+  }, [import.meta.env.WALLET_CONNECT_PROJECT_ID]);
+
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>

@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button.tsx';
 import {
   type BaseError,
+  useAccount,
   useWaitForTransactionReceipt,
   useWriteContract,
 } from 'wagmi';
@@ -13,13 +14,16 @@ import {
   CardTitle,
 } from '@/components/ui/card.tsx';
 import { useToastHelper } from '@/hooks/use-toast-helper.tsx';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function MintNFT() {
+  const account = useAccount();
   const { data: hash, error, isPending, writeContract } = useWriteContract();
   const showToast = useToastHelper();
   const minFee = '0.01';
   // const deployedContractAddress = import.meta.env.DEPLOYED_CONTRACT;
+
+  const [nftMinted, setNftMinted] = useState<boolean>(false);
 
   const { isLoading: isConfirming, isSuccess: isConfirmed } =
     useWaitForTransactionReceipt({
@@ -27,6 +31,7 @@ export default function MintNFT() {
     });
 
   async function submit() {
+    setNftMinted(false);
     writeContract({
       address: `0x015c1236978013b69680AdFa7EB07167BBc8F630`,
       // address: `{0x${deployedContractAddress}`,
@@ -39,6 +44,7 @@ export default function MintNFT() {
 
   useEffect(() => {
     if (isConfirmed) {
+      setNftMinted(true);
       showToast({
         variant: 'default',
         description: `Successful operation`,
@@ -84,7 +90,7 @@ export default function MintNFT() {
       </CardHeader>
       <Button
         onClick={() => submit()}
-        disabled={isPending || isConfirming}
+        disabled={isPending || isConfirming || !account.isConnected}
         variant={'destructive'}
       >
         {isPending || isConfirming
@@ -93,6 +99,23 @@ export default function MintNFT() {
             : 'Transaction is processing...'
           : 'Mint'}{' '}
       </Button>
+      {!(isPending || isConfirming) && nftMinted && (
+        <div className="flex-col items-center bg-clip p-10">
+          <Card className={'flex flex-col justify-center items-center p-10'}>
+            <Button
+              onClick={() => {
+                window.open(
+                  `https://testnets.opensea.io/collection/random-on-chain-nft-2`,
+                  '_blank',
+                );
+              }}
+              variant={'link'}
+            >
+              View Collection
+            </Button>
+          </Card>
+        </div>
+      )}
     </Card>
   );
 }

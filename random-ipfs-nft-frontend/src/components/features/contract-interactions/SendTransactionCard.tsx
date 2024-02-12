@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {
   type BaseError,
+  useAccount,
   useSendTransaction,
   useWaitForTransactionReceipt,
 } from 'wagmi';
@@ -10,6 +11,8 @@ import { Button } from '@/components/ui/button.tsx';
 import { Input } from '@/components/ui/input.tsx';
 
 export default function SendTransaction() {
+  const account = useAccount();
+
   const {
     data: hash,
     error,
@@ -41,7 +44,7 @@ export default function SendTransaction() {
           <Button
             className={'space-y-1'}
             variant={'destructive'}
-            disabled={isPending}
+            disabled={isPending || !account.isConnected}
             type="submit"
           >
             {isPending ? 'Confirming...' : 'Send'}
