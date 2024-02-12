@@ -6,7 +6,6 @@ import {
 } from 'wagmi';
 import { abi } from '../../../../data/contract-data/abi.ts';
 import { parseEther } from 'viem';
-import React from 'react';
 import {
   Card,
   CardDescription,
@@ -25,8 +24,7 @@ export default function MintNFT() {
       hash,
     });
 
-  async function submit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
+  async function submit() {
     writeContract({
       address: `0x015c1236978013b69680AdFa7EB07167BBc8F630`,
       // address: `{0x${deployedContractAddress}`,
@@ -38,14 +36,14 @@ export default function MintNFT() {
   }
 
   return (
-    <Card className={'flex flex-col justify-between'}>
+    <Card className={'flex flex-col justify-center items-center p-10'}>
       <CardHeader className={'flex-col items-center gap-4'}>
         <CardTitle>Mint NFT</CardTitle>
         <CardDescription>Mint will cost 0.01 ETH</CardDescription>
       </CardHeader>
       <Button
-        onClick={() => submit}
-        disabled={isPending}
+        onClick={() => submit()}
+        disabled={isPending && isConfirming}
         variant={'destructive'}
       >
         {isPending ? 'Confirming...' : 'Mint'}{' '}

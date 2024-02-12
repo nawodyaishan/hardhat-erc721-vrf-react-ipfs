@@ -13,8 +13,8 @@ export default function WalletConnectCard() {
         <CardTitle>Wallet Connect</CardTitle>
         <CardDescription>Connect your wallet</CardDescription>
       </CardHeader>
-      <div className="items-center">
-        <Card>
+      <div className="flex-col items-center bg-clip p-10">
+        <Card className={'flex flex-col justify-center items-center p-10'}>
           <ConnectKitButton />
         </Card>
       </div>
