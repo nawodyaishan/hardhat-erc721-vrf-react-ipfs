@@ -7,6 +7,7 @@ import SendTransactionCard from './components/features/contract-interactions/Sen
 import MintNFT from '@/components/features/contract-interactions/MintNFT.tsx';
 import WalletConnectCard from '@/components/features/contract-interactions/WalletConnectCard.tsx';
 import { Toaster } from '@/components/ui/toaster.tsx';
+import { ModeToggle } from './components/ui/mode-toggle.tsx';
 
 const queryClient = new QueryClient();
 
@@ -45,6 +46,7 @@ function App() {
           }}
         >
           <div className={'grid grid-rows gap-8'}>
+            <ModeToggle />
             <WalletConnectCard />
             <MintNFT />
             <SendTransactionCard />
