@@ -1,9 +1,9 @@
 import './App.css';
-import { Button } from '@/components/ui/button.tsx';
 import { WagmiProvider } from 'wagmi';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { config } from '../config.ts';
 import { ConnectKitButton, ConnectKitProvider } from 'connectkit';
+import MintNftCard from '@/components/mintNftCard.tsx';
 
 const queryClient = new QueryClient();
 
@@ -12,8 +12,8 @@ function App() {
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
         <ConnectKitProvider>
-          <Button>Click me</Button>
           <ConnectKitButton />
+          <MintNftCard />
         </ConnectKitProvider>
       </QueryClientProvider>
     </WagmiProvider>
